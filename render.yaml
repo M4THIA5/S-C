@@ -1,0 +1,36 @@
+version: "1"
+
+projects:
+- name: My project
+  environments:
+  - name: Production
+    services:
+    - type: web
+      name: S-C
+      runtime: node
+      repo: https://github.com/M4THIA5/S-C
+      plan: free
+      envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: S-C-postgres
+          property: connectionString
+      - key: NODE_ENV
+        sync: false
+      - key: PORT
+        sync: false
+      region: frankfurt
+      buildCommand: npm install
+      startCommand: npm start
+      autoDeployTrigger: commit
+    
+    databases:
+    - name: S-C-postgres
+      databaseName: s_c_postgres
+      user: s_c_postgres_user
+      plan: free
+      region: frankfurt
+      ipAllowList:
+      - source: 0.0.0.0/0
+        description: everywhere
+      postgresMajorVersion: "18"
